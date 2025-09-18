@@ -51,11 +51,11 @@ fn input_block(ui: &mut egui::Ui) -> Option<String> {
     let gap = 4.0; 
     // labels for each row; UI grid is computed dynamically from this
     let labels: &[&[&str]] = &[
-        &["+/-", "AC", "DEL", "/", "sin"],
-        &["7", "8", "9", "*", "cos"],
-        &["4", "5", "6", "-", "tan"],
-        &["1", "2", "3", "+", "sqrt"],
-        &["%", "0", ".", "=", "ln"],
+        &["^", "AC", "DEL", "/"],
+        &["7", "8", "9", "*"],
+        &["4", "5", "6", "-"],
+        &["1", "2", "3", "+"],
+        &["%", "0", ".", "="],
     ];
 
     // dynamic cell height based on number of rows
@@ -177,7 +177,39 @@ impl TinyCalc {
     }
 
     fn handle_button(&mut self, button: &str) {
-
+        match button {
+            "AC" => {
+                self.expression.clear();
+                self.display = "0".to_string();
+            }
+            "DEL" => {
+                self.expression.pop();
+                if self.expression.is_empty() {
+                    self.display = "0".to_string();
+                } else {
+                    self.display = self.expression.clone();
+                }
+            }
+            "=" => {
+                let result = match meval::eval_str(&self.expression) {
+                    Ok(v) => v.to_string(),
+                    Err(e) => {
+                        self.display = "Error".to_string();
+                        return;
+                    }
+                };
+                self.display = result;
+            }
+            other => {
+                // 其他按键：直接追加到表达式
+                self.expression.push_str(other);
+                self.display = if self.expression.is_empty() {
+                    "0".to_string()
+                } else {
+                    self.expression.clone()
+                };
+            }
+        }
     }
 }
 
