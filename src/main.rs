@@ -193,7 +193,7 @@ impl TinyCalc {
             "=" => {
                 let result = match meval::eval_str(&self.expression) {
                     Ok(v) => v.to_string(),
-                    Err(e) => {
+                    Err(_e) => {
                         self.display = "Error".to_string();
                         return;
                     }
@@ -201,7 +201,7 @@ impl TinyCalc {
                 self.display = result;
             }
             other => {
-                // 其他按键：直接追加到表达式
+                // add the button text to the expression
                 self.expression.push_str(other);
                 self.display = if self.expression.is_empty() {
                     "0".to_string()
