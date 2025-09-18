@@ -47,23 +47,27 @@ fn input_block(ui: &mut egui::Ui) -> Option<String> {
         5.0,  
         Color32::from_rgb(42, 48, 58), // #2A303A
     );
-    // the size of each cell in input block
-    let cell_w = block_rect.width() / 4.0;
-    let cell_h = block_rect.height() / 5.0;
     // the gap between each cell
     let gap = 4.0; 
-    // each cell in the input block
-    let labels = [
-        ["+/-", "AC", "DEL", "/"],
-        ["7", "8", "9", "*"],
-        ["4", "5", "6", "-"],
-        ["1", "2", "3", "+"],
-        ["%", "0", ".", "="],
+    // labels for each row; UI grid is computed dynamically from this
+    let labels: &[&[&str]] = &[
+        &["+/-", "AC", "DEL", "/", "sin"],
+        &["7", "8", "9", "*", "cos"],
+        &["4", "5", "6", "-", "tan"],
+        &["1", "2", "3", "+", "sqrt"],
+        &["%", "0", ".", "=", "ln"],
     ];
+
+    // dynamic cell height based on number of rows
+    let rows = labels.len() as f32;
+    let cell_h = block_rect.height() / rows;
 
     // double loop to draw each cell
     // every row
     for (row_i, row) in labels.iter().enumerate() {
+        // cell width depends on how many buttons are in this row
+        let cols = row.len() as f32;
+        let cell_w = block_rect.width() / cols;
         // every col
         for (col_i, &text) in row.iter().enumerate() {
             // get the position of the cell
